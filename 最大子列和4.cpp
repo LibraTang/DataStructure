@@ -22,6 +22,6 @@ int MaxSubseqSum4(int A[], int N){
 			ThisSum = 0;
 		}
 	}
-	
+
 	return MaxSum;
 }
