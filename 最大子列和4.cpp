@@ -18,7 +18,7 @@ int MaxSubseqSum4(int A[], int N){
 		ThisSum += A[i];
 		if(ThisSum > MaxSum){
 			MaxSum = ThisSum;
-		}else if(ThisSum < 0){
+		}else if(ThisSum < 0){/*小于0的数不会让子列和变大，因此将和归0并继续计算*/
 			ThisSum = 0;
 		}
 	}
