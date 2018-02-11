@@ -9,7 +9,7 @@ typedef struct _node{
 typedef struct _list{
 	Node *head;
 } List;
-
+ 
 void add(List *pList, int number);
 void print(List *pList);
 
@@ -25,6 +25,7 @@ int main(){
 		}
 	}while(number != -1);
 	print(&list);
+	//Á´±íËÑË÷ 
 	scanf("%d",&number);
 	Node *p;
 	int isFound = 0;
@@ -35,7 +36,27 @@ int main(){
 			break;
 		}
 	}
-	if(!isFound)
+	if(!isFound){
+		printf("Not found\n");
+	} 
+	//Á´±íÉ¾³ý
+	 Node *q;
+	for( q = NULL, p = list.head; p; q = p, p = p->next){
+		if(p->value == number){
+			if(q){
+				q->next = p->next;
+			}else{
+				list.head = p->next;
+			}
+			free(p);
+			break;
+		}
+	}
+	//Á´±íÇå³ý
+	for(p = head; p; p = q){
+		q = p->next;
+		free(p);
+	}
 	
 	return 0;
 }
