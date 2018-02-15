@@ -1,4 +1,5 @@
 #include<stdio.h>
+#include<stdlib.h>
 
 typedef struct polyNode *polynomial;
 struct polyNode{
@@ -36,9 +37,9 @@ polynomial readPoly(){
 	p = (polynomial)malloc(sizeof(struct polyNode)); //链表头空结点
 	p->link = NULL;
 	rear = p; 
+	printf("Enter coef and expon:");
 	while(n--){
-		printf("Enter coef and expon:");
-		scanf("%d%d", &c, &e);
+		scanf("%d %d", &c, &e);
 		attach(c, e, &rear);
 	}
 	//删除临时生成的头结点 
@@ -61,10 +62,10 @@ void attach(int c, int e, polynomial *pRear){ //pRear是指向指针的指针
 }
 
 polynomial add(polynomial p1, polynomial p2){
-	polynomial t1, t2, p, rear, temp;
+	polynomial t1, t2, p, rear;
 	
 	t1 = p1; t2 = p2;
-	p = (polynomial)malloc(sizeof(struct polyNode));
+	p = (polynomial)malloc(sizeof(struct polyNode)); //构造空结点 
 	p->link = NULL;
 	rear = p;
 	while(t1&&t2){
@@ -91,16 +92,64 @@ polynomial add(polynomial p1, polynomial p2){
 		attach(t2->coef, t2->expon, &rear);
 		t2 = t2->link;
 	}
-	//搞不懂 
+	//有点不明白 
 	rear->link = NULL;
-	temp = p;
+	t2 = p;
 	p = p->link;
-	free(temp);
+	free(t2);
 	return p;
 }
 
 polynomial mult(polynomial p1, polynomial p2){
+	//逐项插入
+	polynomial p, rear, t1, t2, t;
+	int c, e;
 	
+	if(!p1 || !p2){
+		return NULL;
+	} 
+	
+	t1 = p1; t2 = p2;
+	p = (polynomial)malloc(sizeof(struct polyNode)); //构造空结点
+	p->link = NULL;
+	rear = p;
+	while(t2){ //先用p1的第一项乘以p2，得到p 
+		attach(t1->coef * t2->coef, t1->expon + t2->expon, &rear);
+		t2 = t2->link;
+	} 
+	t1 = t1->link;
+	while(t1){
+		t2 = p2; rear = p;
+		while(t2){
+			e = t1->expon + t2->expon;
+			c = t1->coef * t2->coef;
+			while(rear->link && rear->link->expon > e){ //判断指数是否小于下一项 
+				rear = rear->link;
+			}
+			if(rear->link && rear->link->expon == e){ //若指数相等 
+				if(rear->link->coef + c){
+					rear->link->coef += c;
+				}else{ //如果系数和为0，删除结点 
+					t = rear->link;
+					rear->link = t->link;
+					free(t);
+				}
+			}else{ //插入链中 
+				t = (polynomial)malloc(sizeof(struct polyNode));
+				t->coef = c; t->expon = e;
+				t->link = rear->link;
+				rear->link = t;
+				rear = rear->link; 
+			}
+			t2 = t2->link;
+		}
+		t1 = t1->link;
+	}
+	t2 = p;
+	p = p->link;
+	free(t2);
+	
+	return p;
 }
 
 void printPoly(polynomial p){
@@ -122,70 +171,3 @@ void printPoly(polynomial p){
 	}
 }
 
-
-
-
-
-
-
-
-
-//struct PolyNode{
-//	int coef; //系数 
-//	int expon; //指数
-//	struct PolyNode *link; //指向下一结点的指针 
-//};
-//typedef struct PolyNode *Polynomial;
-//Polynomial P1, P2;
-//
-//Polynomial PolyAdd(Polynomial P1, Polynomial P2){
-//	Polynomial front, rear, temp;
-//	int sum;
-//	rear = (Polynomial)malloc(sizeof(struct PolyNode));
-//	front = rear; //由front记录结果多项式链表头结点
-//	while(P1&&P2){
-//		switch(Compare(P1->expon, P2->expon)){
-//			case 1:
-//				Attach(P1->coef, P1->expon, &rear);
-//				P1 = P1->link;
-//				break;
-//			case -1:
-//				Attach(P2->coef, P2->expon, &rear);
-//				P2 = P2->link;
-//				break;
-//			case 0:
-//				sum = P1->coef + P2->coef;
-//				if(sum){
-//					Attach(sum, P1->expon, &rear);
-//				}
-//				P1 = P1->link;
-//				P2 = P2->link;
-//				break;
-//		}
-////		将未处理完的另一个多项式的所有结点依次复制到结果多项式中去
-//		for(; P1; P1 = P1->link){
-//			Attach(P1->coef, P1->expon, &rear);
-//		} 
-//		for(; P2; P2 = P2->link){
-//			Attach(P2->coef, P2->expon, &rear);
-//		}
-//		rear->link = NULL;
-//		temp = front;
-//		front = front->link; //令front指向结果多项式第一个非零项
-//		free(temp); //释放临时空表头结点
-//		return front; 
-//	} 
-//}
-//
-//void Attach(int c, int e, Polynomial *pRear){
-////	由于本函数中需要改变当前结果表达式尾项指针的值，
-//// 	所以函数传递进来的是结点指针的地址，*pRear指向尾项
-//	Polynomial P;
-//	
-//	P = (Polynomial)malloc(sizeof(struct PolyNode)); //申请新结点 
-//	P->coef = c;
-//	P->expon = e;
-//	P->link = NULL;
-//	(*pRear)->link = P;
-//	*pRear = P; //修改pRear值 
-//}
