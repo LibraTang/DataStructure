@@ -32,13 +32,15 @@ Tree BuildTree(struct TreeNode T[]){
 	char cl, cr;
 	int i, n, Root, check[n];
 	
-	scanf("%d\n",&n);
+	scanf("%d",&n); 
+	
 	if(n){
 		for(i = 0; i < n; i++){
 			check[i] = 0;
 		}
 		for(i = 0; i < n; i++){
-			scanf("%c %c %c\n", &T[i].Element, &cl, &cr);
+			getchar();
+			scanf("%c %c %c", &T[i].Element, &cl, &cr); //输入有问题 
 			if(cl != '-'){
 				T[i].Left = cl - '0';
 				check[T[i].Left] = 1;
