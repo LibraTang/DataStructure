@@ -73,7 +73,7 @@ BinTree Delete( BinTree BST, ElementType X )
                     BST = BST->Right; 
                 else                   /* 只有左孩子 */
                     BST = BST->Left;
-                free( Tmp );
+                free( Tmp ); //else没有左孩子也没有右孩子直接free 
             }
         }
     }
